@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emergencias Luchanas</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>body{margin:0;font-family:Arial;background:#111;color:#fff}#map{height:65vh} .top{background:#cc0000;padding:12px;text-align:center;font-weight:bold} .panel{padding:10px} .btn{width:100%;padding:12px;background:#cc0000;color:#fff;border:0;border-radius:10px;margin:6px 0;font-size:16px} .btn2{background:#00aa55}</style>
+</head>
+<body>
+<div class="top">🚨 EMERGENCIAS LUCHANAS - JUAREZ 🚨</div>
+<div id="map"></div>
+<div class="panel">
+<button class="btn" onclick="reportar()">+ REPORTAR EMERGENCIA</button>
+<button class="btn btn2" onclick="ubicarme()">📍 MI UBICACION</button>
+<div id="msg">Listo para usar</div>
+</div>
+<script>
+var map=L.map('map').setView([31.6904,-106.4245],13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+function ubicarme(){navigator.geolocation.getCurrentPosition(p=>{L.marker([p.coords.latitude,p.coords.longitude]).addTo(map).bindPopup("Tu Moto G05 aqui").openPopup(); map.setView([p.coords.latitude,p.coords.longitude],16);});}
+let modo=false;function reportar(){modo=true;document.getElementById('msg').innerText="TOCA EL MAPA DONDE ES";}
+map.on('click',e=>{if(!modo)return;let q=prompt("Que es? incendio/accidente/policia");if(!q)return;L.marker(e.latlng).addTo(map).bindPopup("🚨 "+q.toUpperCase()).openPopup();modo=false;document.getElementById('msg').innerText="Reporte: "+q;});
+</script>
+</body>
+</html>
