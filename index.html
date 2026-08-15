@@ -6,7 +6,7 @@
 <title>Emergencias Luchanas</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>body{margin:0;font-family:Arial;background:#111;color:#fff}#map{height:65vh} .top{background:#cc0000;padding:12px;text-align:center;font-weight:bold} .panel{padding:10px} .btn{width:100%;padding:12px;background:#cc0000;color:#fff;border:0;border-radius:10px;margin:6px 0;font-size:16px} .btn2{background:#00aa55}</style>
+<style>body{margin:0;font-family:Arial;background:#111;color:#fff}#map{height:60vh} .top{background:#cc0000;padding:12px;text-align:center;font-weight:bold} .panel{padding:10px} .btn{width:100%;padding:12px;background:#cc0000;color:#fff;border:0;border-radius:10px;margin:6px 0;font-size:16px} .btn2{background:#00aa55} .btn3{background:#25D366}</style>
 </head>
 <body>
 <div class="top">🚨 EMERGENCIAS LUCHANAS - JUAREZ 🚨</div>
@@ -14,14 +14,31 @@
 <div class="panel">
 <button class="btn" onclick="reportar()">+ REPORTAR EMERGENCIA</button>
 <button class="btn btn2" onclick="ubicarme()">📍 MI UBICACION</button>
+<button class="btn btn3" id="btnWA" style="display:none" onclick="mandarWA()">📲 MANDAR A WHATSAPP</button>
 <div id="msg">Listo para usar</div>
 </div>
 <script>
 var map=L.map('map').setView([31.6904,-106.4245],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+var ultimaEmergencia = "";
 function ubicarme(){navigator.geolocation.getCurrentPosition(p=>{L.marker([p.coords.latitude,p.coords.longitude]).addTo(map).bindPopup("Tu Moto G05 aqui").openPopup(); map.setView([p.coords.latitude,p.coords.longitude],16);});}
 let modo=false;function reportar(){modo=true;document.getElementById('msg').innerText="TOCA EL MAPA DONDE ES";}
-map.on('click',e=>{if(!modo)return;let q=prompt("Que es? incendio/accidente/policia");if(!q)return;L.marker(e.latlng).addTo(map).bindPopup("🚨 "+q.toUpperCase()).openPopup();modo=false;document.getElementById('msg').innerText="Reporte: "+q;});
+map.on('click',e=>{
+ if(!modo)return;
+ let q=prompt("Que es? incendio/accidente/policia");
+ if(!q)return;
+ L.marker(e.latlng).addTo(map).bindPopup("🚨 "+q.toUpperCase()).openPopup();
+ ultimaEmergencia = `🚨 EMERGENCIA LUCHANAS - JUAREZ\nTipo: ${q.toUpperCase()}\nUbicacion: https://www.google.com/maps?q=${e.latlng.lat},${e.latlng.lng}\nHora: ${new Date().toLocaleString()}\nReportado desde app emergencias`;
+ document.getElementById('msg').innerText="Reporte: "+q+" - Listo para enviar";
+ document.getElementById('btnWA').style.display="block";
+ modo=false;
+});
+function mandarWA(){
+ let numero = prompt("Numero de WhatsApp para enviar? (ej: grupo Luchanas o 656... sin +52)", "656");
+ if(!numero)return;
+ let url = `https://wa.me/${numero}?text=${encodeURIComponent(ultimaEmergencia)}`;
+ window.open(url, '_blank');
+}
 </script>
 </body>
 </html>
