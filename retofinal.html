@@ -1,1 +1,34 @@
-vídeo 
+import socket
+import threading
+import base64
+
+HOST = "127.0.0.1" # Solo tu celular, seguro
+PORT = 8888
+USER = "pantera"
+# No pongas la PASS aqui, la pediremos al iniciar
+
+def handle(client):
+    try:
+        req = client.recv(4096).decode('utf-8', 'ignore')
+        auth = base64.b64encode(f"{USER}:{PASS}".encode()).decode()
+        if f"Proxy-Authorization: Basic {auth}" not in req and f"{USER}:{PASS}" not in req:
+            client.send(b"HTTP/1.1 407 Proxy Auth Required\r\nProxy-Authenticate: Basic realm=\"Proxy\"\r\n\r\nNecesitas usuario")
+            client.close()
+            return
+        print(f"Cliente autorizado: {req.split()[0]} {req.split()[1]}")
+        # aqui va tu logica de reenvio real
+    except:
+        pass
+    finally:
+        client.close()
+
+PASS = input("Pon tu password segura: ")
+
+s = socket.socket()
+s.bind((HOST, PORT))
+s.listen(5)
+print(f"Proxy SEGURO en {HOST}:{PORT} user:{USER}")
+
+while True:
+    c, _ = s.accept()
+    threading.Thread(target=handle, args=(c,)).start()
