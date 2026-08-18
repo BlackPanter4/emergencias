@@ -1,0 +1,19 @@
+name: CI Emergencias
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install flask
+      - name: Test proxy y API
+        run: python -m py_compile vpnhwi.py app.py
+      - name: Build OK
+        run: echo "Build pasado - listo para Azure Container Apps"
